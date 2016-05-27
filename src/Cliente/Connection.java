@@ -24,10 +24,10 @@ import javax.swing.ImageIcon;
  * @author humberto COnnection: é a thread do lado do cliente
  */
 class Connection extends Thread {
-    
-    ObjectInputStream inObject;
-    ObjectOutputStream outObject;
-    
+
+    ObjectInputStream inObject = null;
+    ObjectOutputStream outObject = null;
+
     Socket s;
     int turno = 0;
     int eventosNaTela = 0;
@@ -39,194 +39,122 @@ class Connection extends Thread {
     boolean f;
     int numeroDeClicks = 0;
     int numeroDoJogador;
+    String inicioDeJogo = "InicioDeJogo";
+    String fimDeJogo = "FimDeJogo";
+    String meioDoJogo = "MeioDeJogo";
     String envio = "Envio";
     String recebimento = "Recebimento";
     String modoDeJogo;
     ImageIcon[] iconsDaTela;
     int numeroDeButtonNatela;
     boolean enviouMensagem;
-    
+
     public Connection() {
         this.start();
     }
-    
+
     Connection(Socket s, MensagemDeInicioDeJogo mensagemDeInicioDeJogo) {
         this.s = s;
-        
+
         System.out.println("DENTRO DA THREAD");
         this.modoDeJogo = mensagemDeInicioDeJogo.getModoDeJogo();
         this.telaTravada = mensagemDeInicioDeJogo.isTelaTravada();
         this.turno = mensagemDeInicioDeJogo.getTurno();
         this.iconsDaTela = mensagemDeInicioDeJogo.getTemp();
         this.numeroDeButtonNatela = mensagemDeInicioDeJogo.getNumeroDeButtonNatela();
+        numClicks = 0;
+
         enviouMensagem = true;
+        System.out.println("ModoDoJogo: " + modoDeJogo);
         initGame();
         this.start();
-        
+
     }
-    
+
     public void run() {
         MensagemDeInicioDeJogo mensagem;
-        int currentIndex = -1;
-        int oddIndex = -1;
+        int currentIndex = 0;
+        int oddIndex = 0;
         while (true) {
-            if (modoDeJogo.equals("recebimento")) {
-                MensagemDeEnvio mensagemDeRecebimentoDeClickEmUmaCarta = null;
+            if (modoDeJogo.equals(recebimento)) {
+                MensagemDeEnvio mensagemDeRecebimentoDeClickEmUmaCarta = new MensagemDeEnvio();
+                if (inObject == null) {
+                    try {
+                        inObject = new ObjectInputStream(s.getInputStream());
+                    } catch (IOException ex) {
+                        Logger.getLogger(Connection.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+
                 try {
                     mensagemDeRecebimentoDeClickEmUmaCarta = (MensagemDeEnvio) inObject.readObject();
+                    System.out.println("Leu a mensagem de Recebimento ");
                 } catch (IOException ex) {
                     Logger.getLogger(Connection.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (ClassNotFoundException ex) {
                     Logger.getLogger(Connection.class.getName()).log(Level.SEVERE, null, ex);
                 }
                 int numeroDaCartaClickada = mensagemDeRecebimentoDeClickEmUmaCarta.getNumeroAberto();
-                g.icons[numeroDaCartaClickada].setImage(iconsDaTela[numeroDaCartaClickada]);
-            } else if (modoDeJogo.equals("envio")) {
-                while (enviouMensagem != true) {
-                    if (g.currentIndex != currentIndex) {
-                        MensagemDeEnvio mensagemDeEnvioDeClickEmUmaCarta = new MensagemDeEnvio();
-                        mensagemDeEnvioDeClickEmUmaCarta.setNumeroAberto(g.currentIndex);
-                        currentIndex = g.currentIndex;
+                g.buttons[numeroDaCartaClickada].setEnabled(true);
+//                g.icons[numeroDaCartaClickada] = (iconsDaTela[numeroDaCartaClickada]);
+                
+            } else if (modoDeJogo.equals(envio)) {
+                System.out.println("numero de Clicks" + g.numeroDeClicks);
+                System.out.println("numero de clikcs da conection " + numClicks);
+                if (g.numeroDeClicks != numClicks) {
+
+//                    if (g.currentIndex != currentIndex) {
+                    numClicks = g.numeroDeClicks;
+                    MensagemDeEnvio mensagemDeEnvioDeClickEmUmaCarta = new MensagemDeEnvio();
+                    mensagemDeEnvioDeClickEmUmaCarta.setNumeroAberto(g.currentIndex);
+
+                    currentIndex = g.currentIndex;
+                    if (outObject == null) {
                         try {
                             outObject = new ObjectOutputStream(s.getOutputStream());
                         } catch (IOException ex) {
                             Logger.getLogger(Connection.class.getName()).log(Level.SEVERE, null, ex);
                         }
-                        try {
-                            outObject.writeObject(mensagemDeEnvioDeClickEmUmaCarta);
-                        } catch (IOException ex) {
-                            Logger.getLogger(Connection.class.getName()).log(Level.SEVERE, null, ex);
-                        }
-                        enviouMensagem = false;
                     }
-                    
-                    if (g.oddClickIndex != oddIndex) {
-                        MensagemDeEnvio mensagemDeEnvioDeClickEmUmaCarta = new MensagemDeEnvio();
-                        mensagemDeEnvioDeClickEmUmaCarta.setNumeroAberto(g.oddClickIndex);
-                        oddIndex = g.oddClickIndex;
-                        try {
-                            outObject = new ObjectOutputStream(s.getOutputStream());
-                        } catch (IOException ex) {
-                            Logger.getLogger(Connection.class.getName()).log(Level.SEVERE, null, ex);
-                        }
-                        try {
-                            outObject.writeObject(mensagemDeEnvioDeClickEmUmaCarta);
-                        } catch (IOException ex) {
-                            Logger.getLogger(Connection.class.getName()).log(Level.SEVERE, null, ex);
-                        }
-                        enviouMensagem = false;
+                    try {
+                        outObject.writeObject(mensagemDeEnvioDeClickEmUmaCarta);
+                        outObject.flush();
+                        System.out.println("Envio a Mensagem  de Envio " + mensagemDeEnvioDeClickEmUmaCarta.toString());
+                    } catch (IOException ex) {
+                        Logger.getLogger(Connection.class.getName()).log(Level.SEVERE, null, ex);
                     }
+                    enviouMensagem = false;
                 }
+            } else {
+                System.out.println("FOdasse");
             }
+//
+//                if (g.oddClickIndex != oddIndex) {
+//                    MensagemDeEnvio mensagemDeEnvioDeClickEmUmaCarta = new MensagemDeEnvio();
+//                    mensagemDeEnvioDeClickEmUmaCarta.setNumeroAberto(g.oddClickIndex);
+//                    oddIndex = g.oddClickIndex;
+//                    try {
+//                        outObject = new ObjectOutputStream(s.getOutputStream());
+//                    } catch (IOException ex) {
+//                        Logger.getLogger(Connection.class.getName()).log(Level.SEVERE, null, ex);
+//                    }
+//                    try {
+//                        outObject.writeObject(mensagemDeEnvioDeClickEmUmaCarta);
+//                        System.out.println("Envio a Mensagem  de Envio " + mensagemDeEnvioDeClickEmUmaCarta.toString());
+//                    } catch (IOException ex) {
+//                        Logger.getLogger(Connection.class.getName()).log(Level.SEVERE, null, ex);
+//                    }
+//                    enviouMensagem = false;
+//                }
+//            }
         }
     }
-//
-//            if (turno % numeroDoJogador == 0 && telaTravada == false) {
-//                //se o numero de clicks esta desatualizado na thread;
-//                //se o turno do jogador eh o dele
-//                //se a tela esta destravada pra ele
-//                //na vdd eh ambiguo mas vai
-//                //mandar mensagem pros clientes
-//                g.numeroDeClicks = numeroDeClicks;
-//                if (currentIndex != g.currentIndex) {
-//                    System.out.println("entrou na diferenca de clicks direito");
-//                    currentIndex = g.currentIndex;
-//                    try {
-//                        MensagemDoJogo mNova = new MensagemDoJogo();
-//                        mNova.setBotaoClicado1(currentIndex);
-//                        mNova.setBotao(true);
-//                        outObject.writeObject(mNova);
-//                        outObject.flush();
-//                        System.out.println("Enviou a mensagem de clicks");
-//                    } catch (IOException ex) {
-//                        System.out.println(ex.getMessage());
-//                        Logger.getLogger(Connection.class.getName()).log(Level.SEVERE, null, ex);
-//                    }
-//                }
-//                if (oddClickIndex != g.oddClickIndex) {
-//                    System.out.println("entrou na diferenca de clicks esquerdo");
-//                    oddClickIndex = g.oddClickIndex;
-//                    mensagem.setBotaoClicado1(oddClickIndex);
-//                    mensagem.setBotao(false);
-//                    try {
-//                        outObject.writeObject(mensagem);
-//                        outObject.flush();
-//                        System.out.println("Enviou a mensagem de clicks");
-//                    } catch (IOException ex) {
-//                        Logger.getLogger(Connection.class.getName()).log(Level.SEVERE, null, ex);
-//                    }
-//                }
-//
-//            } else if (turno % numeroDoJogador != 0 && telaTravada == true) {
-//                try {
-//                    inObject = new ObjectInputStream(s.getInputStream());
-//
-//                } catch (IOException ex) {
-//                    Logger.getLogger(Connection.class.getName()).log(Level.SEVERE, null, ex);
-//                }
-//                try {
-//                    mensagem = (MensagemDoJogo) inObject.readObject();
-//                } catch (IOException ex) {
-//                    Logger.getLogger(Connection.class.getName()).log(Level.SEVERE, null, ex);
-//                } catch (ClassNotFoundException ex) {
-//                    Logger.getLogger(Connection.class.getName()).log(Level.SEVERE, null, ex);
-//                }
-//                boolean botao = mensagem.isBotao();
-//                if (botao == true) {
-//                    currentIndex = mensagem.getBotaoClicado1();
-//                    openCard(currentIndex);
-//                } else {
-//                    oddClickIndex = mensagem.getBotaoClicado2();
-//                    openCard(oddClickIndex);
-//                }
-//
-//                System.out.println("recebeu a mensagem dos clicks");
-////            }
-//        }
-//    }
 
     private void initGame() {
-        g = new Game(numeroDeButtonNatela, iconsDaTela, telaTravada);
+        numeroDeClicks = 0;
+        g = new Game(numeroDeButtonNatela, iconsDaTela, telaTravada, numeroDeClicks);
     }
 
-//        
-//        
-//        MensagemDoJogo mensagemDoJogo = null;
-//        System.out.println("initGame iniciado");
-//        try {
-//            inObject = new ObjectInputStream(s.getInputStream());
-//            System.out.println("Aceitou a conexao");
-//
-//        } catch (IOException ex) {
-//            Logger.getLogger(Connection.class
-//                    .getName()).log(Level.SEVERE, null, ex);
-//        }
-//        turno++;
-//        try {
-//            mensagemDoJogo = (MensagemDoJogo) inObject.readObject();
-//            System.out.println("leu a o objeto");
-//            //mudar o codigo para um so object input e output; na classe toda;
-//
-//        } catch (IOException ex) {
-//            Logger.getLogger(Connection.class
-//                    .getName()).log(Level.SEVERE, null, ex);
-//
-//        } catch (ClassNotFoundException ex) {
-//            Logger.getLogger(Connection.class
-//                    .getName()).log(Level.SEVERE, null, ex);
-//        }
-//
-//        System.out.println("preparando");
-//        int numeroDeButoes = mensagemDoJogo.getNumeroDeButtons();
-//        ImageIcon[] temp = mensagemDoJogo.getTemp();
-//        boolean t = mensagemDoJogo.isTelaTravada();
-//        numeroDoJogador = mensagemDoJogo.getNumeroDoJogador();
-//        System.out.println("Recebeu nas variavies");
-//        g = new Game(numeroDeButoes, temp, t);
-//        g.setVisible(true);
-//        System.out.println("O jogo comecou");
-//        inicia jogo;
-//    }
     private void openCard(int botaoClicado) {
         g.buttons[botaoClicado].setIcon(g.icons[botaoClicado]);
         if (currentIndex == oddClickIndex) {
@@ -237,5 +165,5 @@ class Connection extends Thread {
             g.myTimer.start();
         }
     }
-    
+
 }

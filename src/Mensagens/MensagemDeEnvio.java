@@ -5,11 +5,13 @@
  */
 package Mensagens;
 
+import java.io.Serializable;
+
 /**
  *
  * @author humbe
  */
-public class MensagemDeEnvio {
+public class MensagemDeEnvio implements Serializable {
     private int numeroAberto;
 
     public int getNumeroAberto() {

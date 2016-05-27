@@ -13,8 +13,7 @@ import javax.swing.Timer;
 
 /**
  *
- * @author humbe
- * Game é a tela do jogo do cliente
+ * @author humbe Game é a tela do jogo do cliente
  */
 class Game extends JFrame {
 
@@ -36,10 +35,10 @@ class Game extends JFrame {
     boolean imagensDiferentes;
     boolean setEnviouMensagem = false;
 
-
-    Game(int numeroDeButtons, ImageIcon[] temp, boolean telaTravada) {
+    Game(int numeroDeButtons, ImageIcon[] temp, boolean telaTravada, int numero) {
         this.numButtons = numeroDeButtons;
         this.icons = temp;
+        this.numeroDeClicks = numero;
         this.telaTravada = telaTravada;
         System.out.println("TELA" + telaTravada);
         System.out.println("numeroDebuttons" + numeroDeButtons);
@@ -108,7 +107,8 @@ class Game extends JFrame {
     public class ImageButtonListener implements ActionListener {
 
         public void actionPerformed(ActionEvent e) {
-            
+
+                            numeroDeClicks++;
             System.out.println("Clicado" + currentIndex + "e clicado em " + oddClickIndex);
 
             // we are waiting for timer to pop - no user clicks accepted

@@ -5,11 +5,13 @@
  */
 package Mensagens;
 
+import java.io.Serializable;
+
 /**
  *
  * @author humbe
  */
-public class MensagemDeFimDeJogo {
+public class MensagemDeFimDeJogo  implements Serializable{
 
     boolean vencedor;
 

@@ -5,13 +5,14 @@
  */
 package Mensagens;
 
+import java.io.Serializable;
 import javax.swing.ImageIcon;
 
 /**
  *
  * @author humbe
  */
-public class MensagemDeInicioDeJogo {
+public class MensagemDeInicioDeJogo implements Serializable {
 
     private String modoDeJogo;
     private boolean telaTravada;

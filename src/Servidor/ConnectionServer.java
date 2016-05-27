@@ -63,6 +63,7 @@ public class ConnectionServer extends Thread {
     int numeroDeCartasCertas;
     int numeroDoJogadorEmModoDeEnvio;
     ArrayList<Integer> numeroDeAcertosDeCadaJogador;
+    MensagemDeEnvio mensagemDeEnvioAosJogadoresEmRecebimento = null;
 
     ConnectionServer() {
     }
@@ -94,6 +95,7 @@ public class ConnectionServer extends Thread {
             for (int i = 0; i < numButtons; i++) {
                 icons[i] = new ImageIcon();
             }
+            System.out.println("Selecionou as cartas");
             for (int j = 0; j < numeroDeJogadores; j++) {
                 if (j == 0) {
                     modoDeJogos.add(envio);
@@ -101,6 +103,7 @@ public class ConnectionServer extends Thread {
                     modoDeJogos.add(recebimento);
                 }
             }//setando as configuracoes de jogo
+            System.out.println("Decidiu quem e envio e quem eh recebimento");
             for (Socket e : listaDeJogadoresDaPartida) {
 
                 try {
@@ -126,7 +129,7 @@ public class ConnectionServer extends Thread {
                     Logger.getLogger(ConnectionServer.class.getName()).log(Level.SEVERE, null, ex);
                 }
                 numeroDeAcertosDeCadaJogador.add(0);//numerodeAcertosDeCadaum
-
+                numeroDoJogador++;
             }
             numeroDoJogadorEmModoDeEnvio = 0;//eh o primeiro que comeca a jogar, depois eu coloco um sorteio
             modoDeJogoServidor = meioDoJogo;
@@ -180,8 +183,9 @@ public class ConnectionServer extends Thread {
             }
         } else if (modoDeJogoServidor.equals(meioDoJogo)) {// se não os turnos continuam
             int numeroDoJogador = 0;
-            MensagemDeEnvio mensagemDeEnvioAosJogadoresEmRecebimento = new MensagemDeEnvio();
+
             if (numeroDeCartasCertas != numButtons) {//se não terminou o jogo;
+                
                 for (Socket e : listaDeJogadoresDaPartida) {
                     if (numeroDoJogador == numeroDoJogadorEmModoDeEnvio) {
                         try {
@@ -191,6 +195,7 @@ public class ConnectionServer extends Thread {
                         }
                         try {
                             mensagemDeEnvioAosJogadoresEmRecebimento = (MensagemDeEnvio) inObject.readObject();
+                            System.out.println("Leu mensagem de Recebimento");
                         } catch (IOException ex) {
                             Logger.getLogger(ConnectionServer.class.getName()).log(Level.SEVERE, null, ex);
                         } catch (ClassNotFoundException ex) {
@@ -198,7 +203,7 @@ public class ConnectionServer extends Thread {
                         }
                     }
                     numeroDoJogador++;
-                }
+                }                
                 numeroDoJogador = 0;
 
                 for (Socket e : listaDeJogadoresDaPartida) {
@@ -210,9 +215,12 @@ public class ConnectionServer extends Thread {
                         }
                         try {
                             outObject.writeObject(mensagemDeEnvioAosJogadoresEmRecebimento);
+                            outObject.flush();
+                            System.out.println("Enviou mensagem de recebimento");
                         } catch (IOException ex) {
                             Logger.getLogger(ConnectionServer.class.getName()).log(Level.SEVERE, null, ex);
                         }
+
                     }
                     numeroDoJogador++;
                 }
