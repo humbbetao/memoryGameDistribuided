@@ -12,14 +12,32 @@ import java.io.Serializable;
  * @author humbe
  */
 public class MensagemDeEnvio implements Serializable {
+
     private int numeroAberto;
+    private boolean acertada;
 
     public int getNumeroAberto() {
         return numeroAberto;
     }
 
+    public MensagemDeEnvio() {
+    }
+
     public void setNumeroAberto(int numeroAberto) {
         this.numeroAberto = numeroAberto;
     }
-    
+
+    public MensagemDeEnvio(int numeroAberto, boolean acertada) {
+        this.numeroAberto = numeroAberto;
+        this.acertada = acertada;
+    }
+
+    public boolean isAcertada() {
+        return acertada;
+    }
+
+    public void setAcertada(boolean acertada) {
+        this.acertada = acertada;
+    }
+
 }

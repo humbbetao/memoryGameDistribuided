@@ -5,12 +5,8 @@
  */
 package Cliente;
 
-import Mensagens.Mensagem;
 import Mensagens.MensagemDeEnvio;
 import Mensagens.MensagemDeInicioDeJogo;
-import Mensagens.MensagemDoJogo;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -55,8 +51,6 @@ class Connection extends Thread {
 
     Connection(Socket s, MensagemDeInicioDeJogo mensagemDeInicioDeJogo) {
         this.s = s;
-
-        System.out.println("DENTRO DA THREAD");
         this.modoDeJogo = mensagemDeInicioDeJogo.getModoDeJogo();
         this.telaTravada = mensagemDeInicioDeJogo.isTelaTravada();
         this.turno = mensagemDeInicioDeJogo.getTurno();
@@ -96,8 +90,9 @@ class Connection extends Thread {
                 }
                 int numeroDaCartaClickada = mensagemDeRecebimentoDeClickEmUmaCarta.getNumeroAberto();
                 g.buttons[numeroDaCartaClickada].setEnabled(true);
-//                g.icons[numeroDaCartaClickada] = (iconsDaTela[numeroDaCartaClickada]);
-                
+                g.icons[numeroDaCartaClickada] = (iconsDaTela[numeroDaCartaClickada]);
+                g.myTimer.start();
+
             } else if (modoDeJogo.equals(envio)) {
                 System.out.println("numero de Clicks" + g.numeroDeClicks);
                 System.out.println("numero de clikcs da conection " + numClicks);
@@ -128,25 +123,6 @@ class Connection extends Thread {
             } else {
                 System.out.println("FOdasse");
             }
-//
-//                if (g.oddClickIndex != oddIndex) {
-//                    MensagemDeEnvio mensagemDeEnvioDeClickEmUmaCarta = new MensagemDeEnvio();
-//                    mensagemDeEnvioDeClickEmUmaCarta.setNumeroAberto(g.oddClickIndex);
-//                    oddIndex = g.oddClickIndex;
-//                    try {
-//                        outObject = new ObjectOutputStream(s.getOutputStream());
-//                    } catch (IOException ex) {
-//                        Logger.getLogger(Connection.class.getName()).log(Level.SEVERE, null, ex);
-//                    }
-//                    try {
-//                        outObject.writeObject(mensagemDeEnvioDeClickEmUmaCarta);
-//                        System.out.println("Envio a Mensagem  de Envio " + mensagemDeEnvioDeClickEmUmaCarta.toString());
-//                    } catch (IOException ex) {
-//                        Logger.getLogger(Connection.class.getName()).log(Level.SEVERE, null, ex);
-//                    }
-//                    enviouMensagem = false;
-//                }
-//            }
         }
     }
 
@@ -154,16 +130,4 @@ class Connection extends Thread {
         numeroDeClicks = 0;
         g = new Game(numeroDeButtonNatela, iconsDaTela, telaTravada, numeroDeClicks);
     }
-
-    private void openCard(int botaoClicado) {
-        g.buttons[botaoClicado].setIcon(g.icons[botaoClicado]);
-        if (currentIndex == oddClickIndex) {
-            numClicks--;
-            return;
-        }
-        if (g.icons[currentIndex] != g.icons[oddClickIndex]) {
-            g.myTimer.start();
-        }
-    }
-
 }

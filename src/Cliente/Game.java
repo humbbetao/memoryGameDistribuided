@@ -1,11 +1,8 @@
 package Cliente;
 
-import Servidor.*;
 import java.awt.GridLayout;
-import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Random;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -40,16 +37,9 @@ class Game extends JFrame {
         this.icons = temp;
         this.numeroDeClicks = numero;
         this.telaTravada = telaTravada;
-        System.out.println("TELA" + telaTravada);
-        System.out.println("numeroDebuttons" + numeroDeButtons);
-        // Set the title.
 
-        setTitle("Memory Game");
-
-        // Specify an action for the close button.
+        setTitle("Jogo da Memória");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-        // Create a BorderLayout manager.
         setLayout(new GridLayout(2, files.length));
 
         this.closedIcon = new ImageIcon("Back-Anime-ZX-2.png");
@@ -58,10 +48,8 @@ class Game extends JFrame {
         for (int i = 0, j = 0; i < numButtons / 2; i++) {
 
             icons[j] = new ImageIcon(files[i]);
-            System.out.println("deucerto" + files[i]);
-            System.out.println("pAssou");
             this.buttons[j] = new JButton("");
-            this.buttons[j].addActionListener(new ImageButtonListener());
+//            this.buttons[j].addActionListener(new ImageButtonListener());
             this.buttons[j].setIcon(closedIcon);
             if (telaTravada == false) {
                 this.buttons[j].setEnabled(true);
@@ -72,7 +60,7 @@ class Game extends JFrame {
 
             icons[j] = icons[j - 1];
             buttons[j] = new JButton("");
-            buttons[j].addActionListener(new ImageButtonListener());
+//            buttons[j].addActionListener(new ImageButtonListener());
             buttons[j].setIcon(closedIcon);
             if (telaTravada == true) {
                 buttons[j].setEnabled(false);
@@ -83,70 +71,66 @@ class Game extends JFrame {
         }
         pack();
         setVisible(true);
-        myTimer = new Timer(1000, new TimerListener());
-        myTimer.start();
-        System.out.println("iniciu o jogo");
-    }
-
-    Game() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    public class TimerListener implements ActionListener {
-
-        @Override
-        public void actionPerformed(ActionEvent ae) {
-//         public void actionPerformed(ActionEvent e) {
-            System.out.println(currentIndex);
-            buttons[currentIndex].setIcon(closedIcon);
-            buttons[oddClickIndex].setIcon(closedIcon);
-            myTimer.stop();
-        }
-    }
-
-    public class ImageButtonListener implements ActionListener {
-
-        public void actionPerformed(ActionEvent e) {
-
-                            numeroDeClicks++;
-            System.out.println("Clicado" + currentIndex + "e clicado em " + oddClickIndex);
-
-            // we are waiting for timer to pop - no user clicks accepted
-            if (myTimer.isRunning()) {
-                return;
-            }
-
-//            numClicks++;
-            // we are waiting for timer to pop - no user clicks accepted
-            if (myTimer.isRunning()) {
-                return;
-            }
-
-            // which button was clicked?
-            for (int i = 0; i < numButtons; i++) {
-                if (e.getSource() == buttons[i]) {
-                    buttons[i].setIcon(icons[i]);
-                    currentIndex = i;
-                }
-            }
-            // check for even click
-            if (numClicks % 2 == 0) {
-                // check whether same position is clicked twice!
-                if (currentIndex == oddClickIndex) {
-                    numClicks--;
-                    return;
-                }
-                // are two images matching?
-                if (icons[currentIndex] != icons[oddClickIndex]) {
-                    // show images for 1 sec, before flipping back
-                    imagensDiferentes = true;
-                    myTimer.start();
-                }
-            } else {
-                // we just record index for odd clicks
-                oddClickIndex = currentIndex;
-            }
-//            numeroDeClicks++;
-        }
+//        myTimer = new Timer(1000, new TimerListener());
+//        myTimer.start();
+        System.out.println("iniciou a tela");
     }
 }
+//
+//    public class TimerListener implements ActionListener {
+//
+//        @Override
+//        public void actionPerformed(ActionEvent ae) {
+////         public void actionPerformed(ActionEvent e) {
+//            System.out.println(currentIndex);
+//            buttons[currentIndex].setIcon(closedIcon);
+//            buttons[oddClickIndex].setIcon(closedIcon);
+//            myTimer.stop();
+//        }
+//    }
+//
+//    public class ImageButtonListener implements ActionListener {
+//
+//        public void actionPerformed(ActionEvent e) {
+//
+//                            numeroDeClicks++;
+//            System.out.println("Clicado" + currentIndex + "e clicado em " + oddClickIndex);
+//
+//            // we are waiting for timer to pop - no user clicks accepted
+//            if (myTimer.isRunning()) {
+//                return;
+//            }
+//
+////            numClicks++;
+//            // we are waiting for timer to pop - no user clicks accepted
+//            if (myTimer.isRunning()) {
+//                return;
+//            }
+//
+//            // which button was clicked?
+//            for (int i = 0; i < numButtons; i++) {
+//                if (e.getSource() == buttons[i]) {
+//                    buttons[i].setIcon(icons[i]);
+//                    currentIndex = i;
+//                }
+//            }
+//            // check for even click
+//            if (numClicks % 2 == 0) {
+//                // check whether same position is clicked twice!
+//                if (currentIndex == oddClickIndex) {
+//                    numClicks--;
+//                    return;
+//                }
+//                // are two images matching?
+//                if (icons[currentIndex] != icons[oddClickIndex]) {
+//                    // show images for 1 sec, before flipping back
+//                    imagensDiferentes = true;
+//                    myTimer.start();
+//                }
+//            } else {
+//                // we just record index for odd clicks
+//                oddClickIndex = currentIndex;
+//            }
+////            numeroDeClicks++;
+//        }
+

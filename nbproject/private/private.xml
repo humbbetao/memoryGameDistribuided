@@ -5,12 +5,16 @@
         <group>
             <file>file:/C:/Users/humbe/Documents/NetBeansProjects/memoryGame/src/Cliente/TCPClient.java</file>
             <file>file:/C:/Users/humbe/Documents/NetBeansProjects/memoryGame/src/Mensagens/Mensagem.java</file>
+            <file>file:/C:/Users/humbe/Documents/NetBeansProjects/memoryGame/src/Mensagens/MensagemDeInicioDeJogo.java</file>
             <file>file:/C:/Users/humbe/Documents/NetBeansProjects/memoryGame/src/Servidor/TCPServer.java</file>
+            <file>file:/C:/Users/humbe/Documents/NetBeansProjects/memoryGame/src/Mensagens/MensagemDeEnvio.java</file>
             <file>file:/C:/Users/humbe/Documents/NetBeansProjects/memoryGame/src/Mensagens/MensagemDoJogo.java</file>
             <file>file:/C:/Users/humbe/Documents/NetBeansProjects/memoryGame/src/Cliente/MemoryGame.java</file>
             <file>file:/C:/Users/humbe/Documents/NetBeansProjects/memoryGame/src/Cliente/Game.java</file>
+            <file>file:/C:/Users/humbe/Documents/NetBeansProjects/memoryGame/src/Mensagens/MensagemDeRecebimento.java</file>
             <file>file:/C:/Users/humbe/Documents/NetBeansProjects/memoryGame/src/Servidor/ConnectionServer.java</file>
             <file>file:/C:/Users/humbe/Documents/NetBeansProjects/memoryGame/src/Cliente/Connection.java</file>
+            <file>file:/C:/Users/humbe/Documents/NetBeansProjects/memoryGame/src/Mensagens/MensagemDeFimDeJogo.java</file>
         </group>
     </open-files>
 </project-private>
