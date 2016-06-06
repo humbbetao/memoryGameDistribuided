@@ -16,6 +16,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
+import static java.util.Collections.max;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
@@ -89,10 +90,9 @@ public class ConnectionServer extends Thread {
     }
 
     private void turnar() {
-
         if (modoDeJogoServidor.equals(inicioDeJogo)) {
             iniciarOJogo();
-        } else if (modoDeJogoServidor.equals(fimDeJogo)) {
+        } else if (modoDeJogoServidor.equals(fimDeJogo) && numeroDeCartasCertas == numButtons) {
             finalizarOJogo();
         } else if (modoDeJogoServidor.equals(meioDoJogo)) {// se não os turnos continuam
             turnoDoJogo();
@@ -107,9 +107,7 @@ public class ConnectionServer extends Thread {
                 int num = numeroDeAcertosDeCadaJogador.get(numeroDoJogadorEmModoDeEnvio);
                 numeroDeAcertosDeCadaJogador.set(numeroDoJogadorEmModoDeEnvio, (num++));
             }
-
         }
-
     }
 
     private void iniciarOJogo() {
@@ -214,44 +212,69 @@ public class ConnectionServer extends Thread {
     private void turnoDoJogo() {
         int numeroDoJogador = 0;
         if (numeroDeCartasCertas != numButtons) {//se não terminou o jogo;
-
-            try {
-                inObject = new ObjectInputStream(listaDeJogadoresDaPartida.get(numeroDoJogadorEmModoDeEnvio).getInputStream());
-            } catch (IOException ex) {
-                Logger.getLogger(ConnectionServer.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            try {
-                mensagemDeEnvioAosJogadoresEmRecebimento = (MensagemDeEnvio) inObject.readObject();
-                System.out.println("Leu mensagem de Recebimento");
-            } catch (IOException ex) {
-                Logger.getLogger(ConnectionServer.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (ClassNotFoundException ex) {
-                Logger.getLogger(ConnectionServer.class.getName()).log(Level.SEVERE, null, ex);
-            }
-
+            MensagemDeEnvio mEnvio = recebimentoDaMensagem();//recebe a mensagem do usuario
+            envioDaMensagem(mEnvio, numeroDoJogador); //envia a mensagem
+            //aqui no envio da mensagem 
+            // colocar um boolean para ver se amensagem foi enviada e travar o envio se ja for enviada;
             numeroDoJogador = 0;
             atualizarCartasAbertas();
-
-            for (Socket e : listaDeJogadoresDaPartida) {
-                if (numeroDoJogador != numeroDoJogadorEmModoDeEnvio) {
-                    try {
-                        outObject = new ObjectOutputStream(e.getOutputStream());
-                    } catch (IOException ex) {
-                        Logger.getLogger(ConnectionServer.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                    try {
-                        outObject.writeObject(mensagemDeEnvioAosJogadoresEmRecebimento);
-                        outObject.flush();
-                        System.out.println("Enviou mensagem de recebimento");
-                    } catch (IOException ex) {
-                        Logger.getLogger(ConnectionServer.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-
-                }
-                numeroDoJogador++;
-            }
 //                mensagemDeEnvioAosJogadoresEmRecebimento = null;
             oddIndexAberta = currentIndexAberta;
+
+            if (numeroDeCartasCertas == numButtons) {
+                int j = max(numeroDeAcertosDeCadaJogador);
+                for (int i : numeroDeAcertosDeCadaJogador) {
+                    MensagemDeFimDeJogo mensagemDeFimDeJogo;
+                    if (i != j) {
+                        mensagemDeFimDeJogo = new MensagemDeFimDeJogo(false, "FimDeJogo");
+                    } else {
+                        mensagemDeFimDeJogo = new MensagemDeFimDeJogo(true, "FimDeJogo");
+                    }
+                    
+                    //enviar mensagem para todos os jogadores,
+                    //ai no lado do jogador ele tenta rtoda vez casting in mensagemdeEnvio e mensagem de fim de jogo
+//                    aquela que der certo deu
+                }
+
+            }
         }
     }
+
+    private MensagemDeEnvio recebimentoDaMensagem() {
+        try {
+            inObject = new ObjectInputStream(listaDeJogadoresDaPartida.get(numeroDoJogadorEmModoDeEnvio).getInputStream());
+        } catch (IOException ex) {
+            Logger.getLogger(ConnectionServer.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        try {
+            mensagemDeEnvioAosJogadoresEmRecebimento = (MensagemDeEnvio) inObject.readObject();
+            System.out.println("Leu mensagem de Recebimento");
+        } catch (IOException ex) {
+            Logger.getLogger(ConnectionServer.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(ConnectionServer.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return mensagemDeEnvioAosJogadoresEmRecebimento;
+    }
+
+    private void envioDaMensagem(MensagemDeEnvio mEnvio, int numeroDoJogador) {
+        for (Socket e : listaDeJogadoresDaPartida) {
+            if (numeroDoJogador != numeroDoJogadorEmModoDeEnvio) {
+                try {
+                    outObject = new ObjectOutputStream(e.getOutputStream());
+                } catch (IOException ex) {
+                    Logger.getLogger(ConnectionServer.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                try {
+                    outObject.writeObject(mensagemDeEnvioAosJogadoresEmRecebimento);
+                    outObject.flush();
+                    System.out.println("Enviou mensagem de recebimento");
+                } catch (IOException ex) {
+                    Logger.getLogger(ConnectionServer.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+            numeroDoJogador++;
+        }
+    }
+
 }

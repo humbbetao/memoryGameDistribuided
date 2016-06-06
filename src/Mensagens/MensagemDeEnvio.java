@@ -16,6 +16,7 @@ public class MensagemDeEnvio implements Serializable {
     private int numeroAberto;
     private boolean acertada;
 
+
     public int getNumeroAberto() {
         return numeroAberto;
     }

@@ -13,7 +13,8 @@ import java.io.Serializable;
  */
 public class MensagemDeFimDeJogo  implements Serializable{
 
-    boolean vencedor;
+    private boolean vencedor;
+    private String modoDeJogo;
 
     public MensagemDeFimDeJogo() {
     }
@@ -28,4 +29,10 @@ public class MensagemDeFimDeJogo  implements Serializable{
     public void setVencedor(boolean vencedor) {
         this.vencedor = vencedor;
     }
+
+    public MensagemDeFimDeJogo(boolean vencedor, String modoDeJogo) {
+        this.vencedor = vencedor;
+        this.modoDeJogo = modoDeJogo;
+    }
+    
 }
