@@ -41,4 +41,10 @@ public class MensagemDeEnvio implements Serializable {
         this.acertada = acertada;
     }
 
+    @Override
+    public String toString() {
+        return "MensagemDeEnvio{" + "numeroAberto=" + numeroAberto + ", acertada=" + acertada + '}';
+    }
+
+    
 }

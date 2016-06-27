@@ -72,8 +72,9 @@ class Connection extends Thread {
                 recebimentoDeDados();
                 System.out.println("RecebeuODado");
             } else if (modoDeJogo.equals(envio)) {
+//                if()
                 envioDeDados();
-                System.out.println("EnviouODado");
+//                System.out.println("EnviouODado");
             } else {
                 System.out.println("TerminouOJogo");
             }
@@ -111,32 +112,39 @@ class Connection extends Thread {
     }
 
     private void envioDeDados() {
-        System.out.println("numero de Clicks" + g.numeroDeClicks);
-        System.out.println("numero de clikcs da conection " + numClicks);
+//        System.out.println("numero de Clicks" + g.numeroDeClicks);
+//        System.out.println("numero de clikcs da conection " + numClicks);
         if (g.numeroDeClicks != numClicks) {
-
+            System.out.println("eh diferente");
 //                    if (g.currentIndex != currentIndex) {
             numClicks = g.numeroDeClicks;
             MensagemDeEnvio mensagemDeEnvioDeClickEmUmaCarta = new MensagemDeEnvio();
             mensagemDeEnvioDeClickEmUmaCarta.setNumeroAberto(g.currentIndex);
-
+            System.out.println("o numero de clciks eh " + numClicks);
             currentIndex = g.currentIndex;
-            if (outObject == null) {
-                try {
-                    outObject = new ObjectOutputStream(s.getOutputStream());
-                } catch (IOException ex) {
-                    Logger.getLogger(Connection.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }
+
             try {
-                outObject.writeObject(mensagemDeEnvioDeClickEmUmaCarta);
-                outObject.flush();
-                System.out.println("Envio a Mensagem  de Envio " + mensagemDeEnvioDeClickEmUmaCarta.toString());
+                outObject = new ObjectOutputStream(s.getOutputStream());
             } catch (IOException ex) {
                 Logger.getLogger(Connection.class.getName()).log(Level.SEVERE, null, ex);
             }
-            enviouMensagem = false;
+            try {
+//                if (mensagemDeEnvioDeClickEmUmaCarta != null) {
+//                System.out.println("Enviou");
+                System.out.println(mensagemDeEnvioDeClickEmUmaCarta.toString());
+//               
+                outObject.writeObject(mensagemDeEnvioDeClickEmUmaCarta);
+                outObject.flush();
+//                }
+//                mensagemDeEnvioDeClickEmUmaCarta = null;
+//                System.out.println("Envio a Mensagem  de Envio " + mensagemDeEnvioDeClickEmUmaCarta.toString());
+            } catch (IOException ex) {
+                Logger.getLogger(Connection.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            enviouMensagem = true;
+        }else{
+            System.out.println("eh igual");
         }
-
+        
     }
 }

@@ -49,7 +49,7 @@ class Game extends JFrame {
 
             icons[j] = new ImageIcon(files[i]);
             this.buttons[j] = new JButton("");
-//            this.buttons[j].addActionListener(new ImageButtonListener());
+            this.buttons[j].addActionListener(new ImageButtonListener());
             this.buttons[j].setIcon(closedIcon);
             if (telaTravada == false) {
                 this.buttons[j].setEnabled(true);
@@ -60,7 +60,7 @@ class Game extends JFrame {
 
             icons[j] = icons[j - 1];
             buttons[j] = new JButton("");
-//            buttons[j].addActionListener(new ImageButtonListener());
+            buttons[j].addActionListener(new ImageButtonListener());
             buttons[j].setIcon(closedIcon);
             if (telaTravada == true) {
                 buttons[j].setEnabled(false);
@@ -71,29 +71,35 @@ class Game extends JFrame {
         }
         pack();
         setVisible(true);
-//        myTimer = new Timer(1000, new TimerListener());
-//        myTimer.start();
+        myTimer = new Timer(1000, new TimerListener());
+        myTimer.start();
         System.out.println("iniciou a tela");
     }
+
+//
+    public class TimerListener implements ActionListener {
+
+        @Override
+        public void actionPerformed(ActionEvent ae) {
+//         public void actionPerformed(ActionEvent e) {
+            System.out.println(currentIndex);
+            buttons[currentIndex].setIcon(closedIcon);
+            buttons[oddClickIndex].setIcon(closedIcon);
+            myTimer.stop();
+        }
+    }
+
+    class ImageButtonListener implements ActionListener {
+//
+
+        public void actionPerformed(ActionEvent e) {
+//
+            numeroDeClicks++;
+            System.out.println(" numero de clicks" + numeroDeClicks);
+        }
+    }
 }
-//
-//    public class TimerListener implements ActionListener {
-//
-//        @Override
-//        public void actionPerformed(ActionEvent ae) {
-////         public void actionPerformed(ActionEvent e) {
-//            System.out.println(currentIndex);
-//            buttons[currentIndex].setIcon(closedIcon);
-//            buttons[oddClickIndex].setIcon(closedIcon);
-//            myTimer.stop();
-//        }
-//    }
-//
-//    public class ImageButtonListener implements ActionListener {
-//
-//        public void actionPerformed(ActionEvent e) {
-//
-//                            numeroDeClicks++;
+
 //            System.out.println("Clicado" + currentIndex + "e clicado em " + oddClickIndex);
 //
 //            // we are waiting for timer to pop - no user clicks accepted
@@ -131,6 +137,8 @@ class Game extends JFrame {
 //                // we just record index for odd clicks
 //                oddClickIndex = currentIndex;
 //            }
-////            numeroDeClicks++;
-//        }
-
+//            numeroDeClicks++;
+//}
+//
+//    }
+//}

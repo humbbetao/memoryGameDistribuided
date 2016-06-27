@@ -28,6 +28,8 @@ import javax.swing.ImageIcon;
 public class ConnectionServer extends Thread {
 
     ArrayList<Socket> listaDeJogadoresDaPartida;
+    ArrayList<ObjectInputStream> inPutStreams;
+    ArrayList<ObjectOutputStream> outPutStreams;
 
     ObjectInputStream inObject;
     ObjectOutputStream outObject;
@@ -126,13 +128,23 @@ public class ConnectionServer extends Thread {
             }
         }//setando as configuracoes de jogo
         System.out.println("Decidiu quem e envio e quem eh recebimento");
+        System.out.println("Elementos de jogadores" + listaDeJogadoresDaPartida.size());
+//        outPutStreams = new ArrayList<>();
+//        inPutStreams = new ArrayList<>();
         for (Socket e : listaDeJogadoresDaPartida) {
-
             try {
+                
                 outObject = new ObjectOutputStream(e.getOutputStream());
+//                outPutStreams.add(outObject);
+//                inPutStreams.add(new ObjectInputStream(e.getInputStream()));
             } catch (IOException ex) {
                 Logger.getLogger(ConnectionServer.class.getName()).log(Level.SEVERE, null, ex);
             }
+//            try {
+//
+//            } catch (IOException ex) {
+//                Logger.getLogger(ConnectionServer.class.getName()).log(Level.SEVERE, null, ex);
+//            }
             MensagemDeInicioDeJogo mensagem = new MensagemDeInicioDeJogo();
             if (numeroDoJogador == 0) {
                 mensagem.setModoDeJogo(envio);
@@ -146,10 +158,10 @@ public class ConnectionServer extends Thread {
             mensagem.setNumeroDeButtonNatela(numButtons);
             try {
                 outObject.writeObject(mensagem);
-                System.out.println("Enviou a mensagem de inicio de Jogo");
             } catch (IOException ex) {
                 Logger.getLogger(ConnectionServer.class.getName()).log(Level.SEVERE, null, ex);
             }
+            System.out.println("Enviou a mensagem de inicio de Jogo");
             numeroDeAcertosDeCadaJogador.add(0);//numerodeAcertosDeCadaum
             numeroDoJogador++;
         }
@@ -212,7 +224,8 @@ public class ConnectionServer extends Thread {
     private void turnoDoJogo() {
 //        int numeroDoJogador = 0;
         if (numeroDeCartasCertas != numButtons) {//se não terminou o jogo;
-            MensagemDeEnvio deEnvio = recebimentoDaMensagem(numeroDoJogadorEmModoDeEnvio);//recebe a mensagem do usuario
+            System.out.println("Eh diferente");
+            MensagemDeEnvio deEnvio = recebimentoDaMensagem();//recebe a mensagem do usuario
             currentIndexAberta = deEnvio.getNumeroAberto();
             cartaAberta++;
             if (cartaAberta == 2) {
@@ -249,13 +262,17 @@ public class ConnectionServer extends Thread {
         }
     }
 
-    private MensagemDeEnvio recebimentoDaMensagem(int numeroDoJogadorEmModoDeEnvio1) {
+    private MensagemDeEnvio recebimentoDaMensagem() {
         int numeroDoJogador = 0;
         for (Socket e : listaDeJogadoresDaPartida) {
-
-            if (numeroDoJogador != numeroDoJogadorEmModoDeEnvio1) {
+            System.out.println("Numero do jogador " + numeroDoJogador);
+            System.out.println("Passou aqui para receber a mensagem");
+            if (numeroDoJogador == numeroDoJogadorEmModoDeEnvio) {
+                
                 try {
+                    System.out.println("ta aqui");
                     inObject = new ObjectInputStream(e.getInputStream());
+                    System.out.println("recebeu");
                 } catch (IOException ex) {
                     Logger.getLogger(ConnectionServer.class.getName()).log(Level.SEVERE, null, ex);
                 }
@@ -278,7 +295,7 @@ public class ConnectionServer extends Thread {
         boolean enviou = true;
         for (Socket e : listaDeJogadoresDaPartida) {
 //            if (numeroDoJogador != numeroDoJogadorEmModoDeEnvio) {
-            if (numeroDoJogador == numeroDoJogadorEmModoDeEnvio) {
+            if (numeroDoJogador != numeroDoJogadorEmModoDeEnvio) {
                 try {
                     outObject = new ObjectOutputStream(e.getOutputStream());
                 } catch (IOException ex) {
