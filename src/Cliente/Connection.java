@@ -5,7 +5,9 @@
  */
 package Cliente;
 
+import static Cliente.Game.files;
 import Mensagens.MensagemDeEnvio;
+import Mensagens.MensagemDeFimDeJogo;
 import Mensagens.MensagemDeInicioDeJogo;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -14,6 +16,7 @@ import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -91,36 +94,51 @@ class Connection extends Thread {
         if (inObject == null) {
             try {
                 inObject = new ObjectInputStream(s.getInputStream());
+
             } catch (IOException ex) {
                 Logger.getLogger(Connection.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-
+        MensagemDeFimDeJogo m1 = null;
         try {
             mensagemDeRecebimentoDeClickEmUmaCarta = (MensagemDeEnvio) inObject.readObject();
             System.out.println("Leu a mensagem de Recebimento ");
+            System.out.println(mensagemDeRecebimentoDeClickEmUmaCarta.toString());
+        } catch (ClassCastException ex) {
+
+            try {
+                m1 = (MensagemDeFimDeJogo) inObject.readObject();
+                System.out.println(m1.toString());
+            } catch (IOException ex1) {
+                Logger.getLogger(Connection.class.getName()).log(Level.SEVERE, null, ex1);
+            } catch (ClassNotFoundException ex1) {
+                Logger.getLogger(Connection.class.getName()).log(Level.SEVERE, null, ex1);
+            }
+
+            if (m1.isVencedor() == true) {
+                JOptionPane.showMessageDialog(g, "Você Venceu");
+            } else {
+                JOptionPane.showMessageDialog(g, "Você perdeu");
+            }
         } catch (IOException ex) {
             Logger.getLogger(Connection.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(Connection.class.getName()).log(Level.SEVERE, null, ex);
         }
+
         int numeroDaCartaClickada = mensagemDeRecebimentoDeClickEmUmaCarta.getNumeroAberto();
+        g.buttons[numeroDaCartaClickada].setIcon(g.icons[numeroDaCartaClickada]);
         g.buttons[numeroDaCartaClickada].setEnabled(true);
-        g.icons[numeroDaCartaClickada] = (iconsDaTela[numeroDaCartaClickada]);
-        g.myTimer.start();
 
     }
 
     private void envioDeDados() {
-//        System.out.println("numero de Clicks" + g.numeroDeClicks);
-//        System.out.println("numero de clikcs da conection " + numClicks);
         if (g.numeroDeClicks != numClicks) {
             System.out.println("eh diferente");
-//                    if (g.currentIndex != currentIndex) {
             numClicks = g.numeroDeClicks;
             MensagemDeEnvio mensagemDeEnvioDeClickEmUmaCarta = new MensagemDeEnvio();
-            mensagemDeEnvioDeClickEmUmaCarta.setNumeroAberto(g.currentIndex);
-            System.out.println("o numero de clciks eh " + numClicks);
+            mensagemDeEnvioDeClickEmUmaCarta.setNumeroAberto(g.imageClicada);
+            System.out.println("o numero de clciks eh " + g.imageClicada);
             currentIndex = g.currentIndex;
 
             try {
@@ -129,22 +147,17 @@ class Connection extends Thread {
                 Logger.getLogger(Connection.class.getName()).log(Level.SEVERE, null, ex);
             }
             try {
-//                if (mensagemDeEnvioDeClickEmUmaCarta != null) {
-//                System.out.println("Enviou");
                 System.out.println(mensagemDeEnvioDeClickEmUmaCarta.toString());
 //               
                 outObject.writeObject(mensagemDeEnvioDeClickEmUmaCarta);
                 outObject.flush();
-//                }
-//                mensagemDeEnvioDeClickEmUmaCarta = null;
-//                System.out.println("Envio a Mensagem  de Envio " + mensagemDeEnvioDeClickEmUmaCarta.toString());
             } catch (IOException ex) {
                 Logger.getLogger(Connection.class.getName()).log(Level.SEVERE, null, ex);
             }
             enviouMensagem = true;
-        }else{
+        } else {
             System.out.println("eh igual");
         }
-        
+
     }
 }

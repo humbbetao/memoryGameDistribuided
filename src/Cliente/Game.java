@@ -24,6 +24,7 @@ class Game extends JFrame {
     ImageIcon icons[];
     Timer myTimer;
     boolean telaTravada;
+    int imageClicada;
 
     int numClicks = 0;
     int oddClickIndex = 0;
@@ -95,50 +96,51 @@ class Game extends JFrame {
         public void actionPerformed(ActionEvent e) {
 //
             numeroDeClicks++;
+            numClicks++;
             System.out.println(" numero de clicks" + numeroDeClicks);
+            // imageClicada = (int) e.getSource();
+
+            System.out.println("Clicado" + currentIndex + "e clicado em " + oddClickIndex);
+
+            // we are waiting for timer to pop - no user clicks accepted
+            if (myTimer.isRunning()) {
+                return;
+            }
+
+//            numClicks++;
+            // we are waiting for timer to pop - no user clicks accepted
+            if (myTimer.isRunning()) {
+                return;
+            }
+
+            // which button was clicked?
+            for (int i = 0; i < numButtons; i++) {
+                if (e.getSource() == buttons[i]) {
+                    buttons[i].setIcon(icons[i]);
+                    currentIndex = i;
+                    imageClicada = i;
+                }
+            }
+            // check for even click
+            if (numClicks % 2 == 0) {
+                // check whether same position is clicked twice!
+                if (currentIndex == oddClickIndex) {
+                    numClicks--;
+                    imagensDiferentes = false;
+                    return;
+                }
+                // are two images matching?
+                if (icons[currentIndex] != icons[oddClickIndex]) {
+                    // show images for 1 sec, before flipping back
+                    imagensDiferentes = true;
+                    myTimer.start();
+                }
+            } else {
+                // we just record index for odd clicks
+                oddClickIndex = currentIndex;
+            }
+//            snumeroDeClicks++;
         }
+
     }
 }
-
-//            System.out.println("Clicado" + currentIndex + "e clicado em " + oddClickIndex);
-//
-//            // we are waiting for timer to pop - no user clicks accepted
-//            if (myTimer.isRunning()) {
-//                return;
-//            }
-//
-////            numClicks++;
-//            // we are waiting for timer to pop - no user clicks accepted
-//            if (myTimer.isRunning()) {
-//                return;
-//            }
-//
-//            // which button was clicked?
-//            for (int i = 0; i < numButtons; i++) {
-//                if (e.getSource() == buttons[i]) {
-//                    buttons[i].setIcon(icons[i]);
-//                    currentIndex = i;
-//                }
-//            }
-//            // check for even click
-//            if (numClicks % 2 == 0) {
-//                // check whether same position is clicked twice!
-//                if (currentIndex == oddClickIndex) {
-//                    numClicks--;
-//                    return;
-//                }
-//                // are two images matching?
-//                if (icons[currentIndex] != icons[oddClickIndex]) {
-//                    // show images for 1 sec, before flipping back
-//                    imagensDiferentes = true;
-//                    myTimer.start();
-//                }
-//            } else {
-//                // we just record index for odd clicks
-//                oddClickIndex = currentIndex;
-//            }
-//            numeroDeClicks++;
-//}
-//
-//    }
-//}
