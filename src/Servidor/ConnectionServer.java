@@ -68,6 +68,9 @@ public class ConnectionServer extends Thread {
     int cartaAberta;
     private int currentIndexAberta;
     private int oddIndexAberta;
+    boolean leu = false;
+    boolean escreveu = false;
+    int id;
 
     ConnectionServer() {
     }
@@ -223,7 +226,7 @@ public class ConnectionServer extends Thread {
 
     private void turnoDoJogo() {
 //        int numeroDoJogador = 0;
-    int numeroDacartaAberta;
+        int numeroDacartaAberta;
         if (numeroDeCartasCertas != numButtons) {//se não terminou o jogo;
             System.out.println("Eh diferente");
 
@@ -256,7 +259,6 @@ public class ConnectionServer extends Thread {
 
     private MensagemDeEnvio recebimentoDaMensagem() {
         int numeroDoJogador = 0;
-        boolean leu = false;
         for (Socket e : listaDeJogadoresDaPartida) {
             System.out.println("Numero do jogador " + numeroDoJogador);
             System.out.println("Passou aqui para receber a mensagem");
@@ -273,6 +275,7 @@ public class ConnectionServer extends Thread {
                 try {
                     mensagemDeEnvioAosJogadoresEmRecebimento = (MensagemDeEnvio) inObject.readObject();
                     System.out.println("Leu mensagem de Recebimento");
+                    id++;
                     leu = true;
                     System.out.println(mensagemDeEnvioAosJogadoresEmRecebimento.toString());
                 } catch (IOException ex) {
@@ -289,18 +292,18 @@ public class ConnectionServer extends Thread {
 
     private void envioDaMensagem(MensagemDeEnvio mEnvio) {
         int numeroDoJogador = 0;
-        boolean enviou = false;
         for (Socket e : listaDeJogadoresDaPartida) {
 //            if (numeroDoJogador != numeroDoJogadorEmModoDeEnvio) {
-            if (numeroDoJogador != numeroDoJogadorEmModoDeEnvio && enviou == false) {
+            if (numeroDoJogador != numeroDoJogadorEmModoDeEnvio && escreveu == false) {
                 try {
                     outObject = new ObjectOutputStream(e.getOutputStream());
                 } catch (IOException ex) {
                     Logger.getLogger(ConnectionServer.class.getName()).log(Level.SEVERE, null, ex);
                 }
                 try {
+                    System.out.println("Abrir a carta " + mEnvio.getNumeroAberto());
                     outObject.writeObject(mEnvio);
-                    enviou = true;
+                    escreveu = true;
 //                    outObject.flush();
 
                     System.out.println("Enviou mensagem de recebimento");

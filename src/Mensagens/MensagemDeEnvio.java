@@ -15,10 +15,22 @@ public class MensagemDeEnvio implements Serializable {
 
     private int numeroAberto;
     private boolean acertada;
+    private int id;
 
+    public MensagemDeEnvio(int id) {
+        this.id = id;
+    }
 
     public int getNumeroAberto() {
         return numeroAberto;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public MensagemDeEnvio() {
@@ -43,8 +55,7 @@ public class MensagemDeEnvio implements Serializable {
 
     @Override
     public String toString() {
-        return "MensagemDeEnvio{" + "numeroAberto=" + numeroAberto + ", acertada=" + acertada + '}';
+        return "MensagemDeEnvio{" + "numeroAberto=" + numeroAberto + ", acertada=" + acertada + ", id=" + id + '}';
     }
 
-    
 }

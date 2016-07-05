@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
@@ -26,7 +27,7 @@ class Connection extends Thread {
 
     ObjectInputStream inObject = null;
     ObjectOutputStream outObject = null;
-
+    ArrayList<Integer> cartasAbertas = new ArrayList<>();
     Socket s;
     int turno = 0;
     int eventosNaTela = 0;
@@ -47,6 +48,8 @@ class Connection extends Thread {
     ImageIcon[] iconsDaTela;
     int numeroDeButtonNatela;
     boolean enviouMensagem;
+    boolean leu = false;
+    boolean escreveu = false;
 
     public Connection() {
         this.start();
@@ -125,21 +128,27 @@ class Connection extends Thread {
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(Connection.class.getName()).log(Level.SEVERE, null, ex);
         }
-
+//        if (mensagemDeRecebimentoDeClickEmUmaCarta != null) {
         int numeroDaCartaClickada = mensagemDeRecebimentoDeClickEmUmaCarta.getNumeroAberto();
         g.buttons[numeroDaCartaClickada].setIcon(g.icons[numeroDaCartaClickada]);
         g.buttons[numeroDaCartaClickada].setEnabled(true);
+        cartasAbertas.add(numeroDaCartaClickada);
+//            mensagemDeRecebimentoDeClickEmUmaCarta = null;
 
+//        }
     }
 
     private void envioDeDados() {
-        if (g.numeroDeClicks != numClicks) {
+        System.out.println("Numero de clicks da thread" + numClicks);
+        System.out.println("Numerode clicks da tela" + g.numeroDeClicks);
+        MensagemDeEnvio mensagemDeEnvioDeClickEmUmaCarta = null;
+        if (g.numeroDeClicks != numClicks && escreveu == false) {
             System.out.println("eh diferente");
             numClicks = g.numeroDeClicks;
-            MensagemDeEnvio mensagemDeEnvioDeClickEmUmaCarta = new MensagemDeEnvio();
+            mensagemDeEnvioDeClickEmUmaCarta = new MensagemDeEnvio();
             mensagemDeEnvioDeClickEmUmaCarta.setNumeroAberto(g.imageClicada);
             System.out.println("o numero de clciks eh " + g.imageClicada);
-            currentIndex = g.currentIndex;
+//            currentIndex = g.currentIndex;
 
             try {
                 outObject = new ObjectOutputStream(s.getOutputStream());
@@ -154,7 +163,7 @@ class Connection extends Thread {
             } catch (IOException ex) {
                 Logger.getLogger(Connection.class.getName()).log(Level.SEVERE, null, ex);
             }
-            enviouMensagem = true;
+            escreveu = true;
         } else {
             System.out.println("eh igual");
         }

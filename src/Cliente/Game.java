@@ -72,9 +72,9 @@ class Game extends JFrame {
         }
         pack();
         setVisible(true);
-        myTimer = new Timer(1000, new TimerListener());
-        myTimer.start();
-        System.out.println("iniciou a tela");
+//        myTimer = new Timer(1000, new TimerListener());
+//        myTimer.start();
+//        System.out.println("iniciou a tela");
     }
 
 //
@@ -91,27 +91,19 @@ class Game extends JFrame {
     }
 
     class ImageButtonListener implements ActionListener {
-//
 
         public void actionPerformed(ActionEvent e) {
-//
             numeroDeClicks++;
-            numClicks++;
+
             System.out.println(" numero de clicks" + numeroDeClicks);
             // imageClicada = (int) e.getSource();
 
             System.out.println("Clicado" + currentIndex + "e clicado em " + oddClickIndex);
 
             // we are waiting for timer to pop - no user clicks accepted
-            if (myTimer.isRunning()) {
-                return;
-            }
-
-//            numClicks++;
-            // we are waiting for timer to pop - no user clicks accepted
-            if (myTimer.isRunning()) {
-                return;
-            }
+//            if (myTimer.isRunning()) {
+//                return;
+//            }
 
             // which button was clicked?
             for (int i = 0; i < numButtons; i++) {
@@ -122,7 +114,7 @@ class Game extends JFrame {
                 }
             }
             // check for even click
-            if (numClicks % 2 == 0) {
+            if (numeroDeClicks % 2 == 0) {
                 // check whether same position is clicked twice!
                 if (currentIndex == oddClickIndex) {
                     numClicks--;
@@ -133,13 +125,13 @@ class Game extends JFrame {
                 if (icons[currentIndex] != icons[oddClickIndex]) {
                     // show images for 1 sec, before flipping back
                     imagensDiferentes = true;
-                    myTimer.start();
+//                    myTimer.start();
                 }
             } else {
                 // we just record index for odd clicks
                 oddClickIndex = currentIndex;
             }
-//            snumeroDeClicks++;
+//            numeroDeClicks++;
         }
 
     }

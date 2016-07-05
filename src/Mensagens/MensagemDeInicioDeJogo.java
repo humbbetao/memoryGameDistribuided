@@ -19,6 +19,7 @@ public class MensagemDeInicioDeJogo implements Serializable {
     private int turno;
     private ImageIcon[] temp;
     private int numeroDeButtonNatela;
+    private int id;
 
     public MensagemDeInicioDeJogo() {
     }
@@ -30,6 +31,15 @@ public class MensagemDeInicioDeJogo implements Serializable {
         this.temp = temp;
     }
 
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    
     public int getNumeroDeButtonNatela() {
         return numeroDeButtonNatela;
     }
